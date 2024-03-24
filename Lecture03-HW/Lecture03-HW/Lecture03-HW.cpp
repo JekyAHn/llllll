@@ -44,20 +44,20 @@ int main() {
     cout << "학번: 202327057" << endl; // 여기에 본인의 학번을 적으세요.
     cout << "이름: 안제철" << endl; // 여기에 본인의 이름을 적으세요.
 
-    int objectCode;
+    int input;
     do {
         cout << "화면에 그릴 물체코드를 입력하세요 (프로그램 종료: 64): ";
-        cin >> objectCode;
+        cin >> input;
 
         // 입력된 키코드가 주어진 키코드와 완전히 일치하지 않는 경우
-        if (objectCode & (objectCode - 1)) {
-            int tempCode = objectCode;
+        if (input & (input - 1)) {
+            int san = input;
             bool isFirst = true;
             // 입력된 키코드를 2진수로 변환하여 가장 가까운 작은 두 개의 키코드에 해당하는 블록 출력
-            while (tempCode > 0) {
-                int highestBit = tempCode & -tempCode; // 가장 오른쪽에 있는 비트만 남기고 나머지는 0으로 만듭니다.
-                drawBlock(highestBit);
-                tempCode -= highestBit;
+            while (san > 0) {
+                int bit = san & -san; // 가장 오른쪽에 있는 비트만 남기고 나머지는 0으로 만듭니다.
+                drawBlock(bit);
+                san -= bit;
                 if (isFirst) {
                     isFirst = false;
                 }
@@ -66,10 +66,10 @@ int main() {
         }
         else {
             // 주어진 키코드에 맞게 블록 출력
-            drawBlock(objectCode);
+            drawBlock(input);
             cout << endl;
         }
-    } while (objectCode != 64); // 사용자가 프로그램 종료를 선택할 때까지 반복
+    } while (input != 64); // 사용자가 프로그램 종료를 선택할 때까지 반복
 
     return 0;
 }

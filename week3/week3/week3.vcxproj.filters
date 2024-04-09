@@ -15,10 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="0313.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="sorce.cpp">
+    <ClCompile Include="week3.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

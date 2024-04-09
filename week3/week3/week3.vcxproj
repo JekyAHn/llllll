@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{23ed9dc2-0ff7-4193-8470-1baccc48f35a}</ProjectGuid>
-    <RootNamespace>My0313</RootNamespace>
+    <ProjectGuid>{c19731cf-0b18-4f20-83bd-253d159106e4}</ProjectGuid>
+    <RootNamespace>week3</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -127,8 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="0313.cpp" />
-    <ClCompile Include="sorce.cpp" />
+    <ClCompile Include="week3.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

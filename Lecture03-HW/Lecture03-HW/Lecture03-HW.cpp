@@ -52,7 +52,7 @@ int main() {
         // 입력된 키코드가 주어진 키코드와 완전히 일치하지 않는 경우
         if (input & (input - 1)) {
             int san = input;
-            bool isFirst = true;
+            bool isFirst = true; 
             // 입력된 키코드를 2진수로 변환하여 가장 가까운 작은 두 개의 키코드에 해당하는 블록 출력
             while (san > 0) {
                 int bit = san & -san; // 가장 오른쪽에 있는 비트만 남기고 나머지는 0으로 만듭니다.

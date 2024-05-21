@@ -21,10 +21,9 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{3cafc7c8-5eb5-45b6-942b-7a12a2f33608}</ProjectGuid>
-    <RootNamespace>Lecture11HW</RootNamespace>
+    <ProjectGuid>{9bf4c40e-37df-4afa-a32d-7dcef6f079eb}</ProjectGuid>
+    <RootNamespace>Lecture10HW</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Lecture10-HW</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

@@ -68,26 +68,32 @@ public:
 };
 class EnemyBlock : public Object {
 private:
-    float width;  // 장애물의 너비 (픽셀 단위)
-    float height; // 장애물의 높이 (픽셀 단위)
+    float width;    // 장애물의 너비 (픽셀 단위)
+    float height;   // 장애물의 높이 (픽셀 단위)
+    float positionX; // 장애물의 X 위치 (픽셀 단위)
+    float positionY; // 장애물의 Y 위치 (픽셀 단위)
 public:
-    EnemyBlock(float width, float height) : width(width), height(height) {}
+    EnemyBlock(float width, float height) : width(width), height(height), positionX(0.0f), positionY(0.0f) {}
 
     void OnCollisionEnter(Object& other) override {
         // Handle collision logic for EnemyBlock
+    }
+
+    void SetPosition(float x, float y) {
+        positionX = x;
+        positionY = y;
     }
 
     void Draw() const override {
         // Draw green block
         glColor3ub(0, 255, 0); // Green color
         glBegin(GL_QUADS);
-        glVertex2f(-width / 400.0f, -height / 300.0f); // 픽셀 단위로 좌표 설정
-        glVertex2f(width / 400.0f, -height / 300.0f);
-        glVertex2f(width / 400.0f, height / 300.0f);
-        glVertex2f(-width / 400.0f, height / 300.0f);
+        glVertex2f(positionX / 800.0f - width / 800.0f, positionY / 600.0f - height / 600.0f);
+        glVertex2f(positionX / 800.0f + width / 800.0f, positionY / 600.0f - height / 600.0f);
+        glVertex2f(positionX / 800.0f + width / 800.0f, positionY / 600.0f + height / 600.0f);
+        glVertex2f(positionX / 800.0f - width / 800.0f, positionY / 600.0f + height / 600.0f);
         glEnd();
     }
-
 };
 
 

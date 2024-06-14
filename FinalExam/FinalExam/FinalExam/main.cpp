@@ -44,7 +44,7 @@ void Update(Player& player)
     // For example, move player based on input
 }
 
-void Render(Player& player, Floor& floor, EnemyBlock& obstacleLow, EnemyBlock& obstacleHigh)
+void Render(Player& player, Floor& floor, EnemyBlock& obstacleLow, EnemyBlock& obstacleHigh , EnemyBlock& obstacleLow2, EnemyBlock& obstacleHigh2)
 {
     // Clear the screen with a dark blue color (assuming 1 pixel = 1 cm)
     glClearColor(0.0f, 0.1176f, 0.3922f, 1.0f); // RGBA 값으로 설정
@@ -57,16 +57,26 @@ void Render(Player& player, Floor& floor, EnemyBlock& obstacleLow, EnemyBlock& o
     player.Draw();
 
     // Draw obstacles
-    glPushMatrix();
-    glTranslatef(-300.0f, 0.0f, 0.0f); // 첫 번째 장애물 위치
+    // 첫 번째 장애물 그리기
+    glColor3ub(0, 255, 0); // Green color
+    obstacleLow.SetPosition(-500.0f, -100.0f);
     obstacleLow.Draw();
-    glPopMatrix();
 
-    glPushMatrix();
-    glTranslatef(500.0f, 0.0f, 0.0f); // 두 번째 장애물 위치
+    glColor3ub(0, 255, 0); // Green color
+    obstacleLow2.SetPosition(-300.0f, -100.0f);
+    obstacleLow2.Draw();
+
+    // 두 번째 장애물 그리기
+    glColor3ub(0, 255, 0); // Green color
+    obstacleHigh.SetPosition(500.0f, -300.0f);
     obstacleHigh.Draw();
-    glPopMatrix();
+
+    glColor3ub(0, 255, 0); // Green color
+    obstacleHigh2.SetPosition(300.0f, -300.0f);
+    obstacleHigh2.Draw();
 }
+
+
 
 
 
@@ -102,8 +112,10 @@ int main(void)
     Floor floor(100.0f); // 바닥 객체 생성 (100px 높이)
 
     // 장애물 객체 생성
-    EnemyBlock obstacleLow(500.0f, 100.0f);   // 낮은 장애물 (높이 100px)
-    EnemyBlock obstacleHigh(500.0f, 300.0f);  // 높은 장애물 (높이 300px)   
+    EnemyBlock obstacleLow1(50.0f, 100.0f);
+    EnemyBlock obstacleLow2(50.0f, 100.0f);// 낮은 장애물 (높이 100px)
+    EnemyBlock obstacleHigh1(50.0f, 300.0f);
+    EnemyBlock obstacleHigh2(50.0f, 300.0f);// 높은 장애물 (높이 300px)   
 
     while (!glfwWindowShouldClose(window))
     {
@@ -112,7 +124,7 @@ int main(void)
         Physics();
         Update(player);
 
-        Render(player, floor, obstacleLow, obstacleHigh);
+        Render(player, floor, obstacleLow1, obstacleHigh1, obstacleHigh2 , obstacleLow2);
 
         glfwSwapBuffers(window);
     }

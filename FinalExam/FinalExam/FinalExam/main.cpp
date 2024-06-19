@@ -1,10 +1,9 @@
-﻿#pragma comment(lib, "Opengl32.lib")
-
+﻿#pragma comment(lib, "OpenGL32.lib")
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
 
 #ifdef _DEBUG
-#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+#define DBG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #else
 #define DBG_NEW new
 #endif
@@ -15,86 +14,103 @@
 #include <thread>
 #include <cmath>
 #include "Object.h"
+#include "Transform.h"
 
-void errorCallback(int error, const char* description)
-{
+using namespace std::chrono;
+
+// 전역 변수로 Player 객체 선언
+Player player;
+bool isCollision = false; // 충돌 여부 확인 변수
+
+// 시간 측정을 위한 변수
+high_resolution_clock::time_point lastTime;
+
+// Error callback 함수
+void errorCallback(int error, const char* description) {
     printf("GLFW Error: %s", description);
 }
 
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    // Handle key events if needed
+// Key callback 함수
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS && !player.isJumping) {
+        player.velocityY = 1000.0f; // 점프 시작 (5m = 500픽셀)
+        player.isJumping = true;
+    }
 }
 
-int Physics()
-{
-    // Perform physics calculations if needed
+// Physics 함수
+int Physics() {
     return 0;
 }
 
-int Initialize()
-{
-    // Perform initialization if needed
+// Initialize 함수
+int Initialize() {
+    glClearColor(0.0f, 0.11f, 0.25f, 1.0f);
+    lastTime = high_resolution_clock::now();
     return 0;
 }
 
-void Update(Player& player)
-{
-    // Perform game logic update if needed
-    // For example, move player based on input
+// Update 함수
+int Update(EnemyBlock& enemy, Player& player, Star stars[], int starCount, float deltaTime) {
+    float gravity = 9.8f * 100; // 중력 가속도 (픽셀 단위)
+
+    if (isCollision) return 0;
+
+    // 플레이어 위치 업데이트
+    applyGravityAndJump(player.posY, player.velocityY, player.isJumping, gravity, deltaTime);
+
+    // 적 위치 업데이트
+    float enemySpeed = 300.0f; // 적 이동 속도
+    updateEnemyPosition(enemy.posX1, enemySpeed, deltaTime);
+    updateEnemyPosition(enemy.posX2, enemySpeed, deltaTime);
+    updateEnemyPosition(enemy.posX3, enemySpeed, deltaTime);
+    updateEnemyPosition(enemy.posX4, enemySpeed, deltaTime);
+    resetEnemyPositions(enemy, -10.0f);
+
+    // 별 위치 업데이트
+    float starSpeed = 100.0f; // 별 이동 속도
+    for (int i = 0; i < starCount; ++i) {
+        updateStarPosition(stars[i].posX, starSpeed, deltaTime);
+        resetStarPosition(stars[i].posX, -10.0f, 810.0f);
+    }
+
+    // 충돌 검사
+    if (PhysicsAABB(player, Object(enemy.posX1, 400.0f, 50.0f, 100.0f)) ||
+        PhysicsAABB(player, Object(enemy.posX2, 200.0f, 50.0f, 300.0f)) ||
+        PhysicsAABB(player, Object(enemy.posX3, 400.0f, 50.0f, 100.0f)) ||
+        PhysicsAABB(player, Object(enemy.posX4, 200.0f, 50.0f, 300.0f))) {
+        isCollision = true;
+    }
+
+    return 0;
 }
 
-void Render(Player& player, Floor& floor, EnemyBlock& obstacleLow, EnemyBlock& obstacleHigh , EnemyBlock& obstacleLow2, EnemyBlock& obstacleHigh2)
-{
-    // Clear the screen with a dark blue color (assuming 1 pixel = 1 cm)
-    glClearColor(0.0f, 0.1176f, 0.3922f, 1.0f); // RGBA 값으로 설정
+// Render 함수
+int Render(EnemyBlock& enemy, Player& player, const Star stars[], int starCount) {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // Draw floor
-    floor.Draw();
-
-    // Draw player
-    player.Draw();
-
-    // Draw obstacles
-    // 첫 번째 장애물 그리기
-    glColor3ub(0, 255, 0); // Green color
-    obstacleLow.SetPosition(-500.0f, -100.0f);
-    obstacleLow.Draw();
-
-    glColor3ub(0, 255, 0); // Green color
-    obstacleLow2.SetPosition(-300.0f, -100.0f);
-    obstacleLow2.Draw();
-
-    // 두 번째 장애물 그리기
-    glColor3ub(0, 255, 0); // Green color
-    obstacleHigh.SetPosition(500.0f, -300.0f);
-    obstacleHigh.Draw();
-
-    glColor3ub(0, 255, 0); // Green color
-    obstacleHigh2.SetPosition(300.0f, -300.0f);
-    obstacleHigh2.Draw();
+    for (int i = 0; i < starCount; ++i) {
+        stars[i].drawStar();
+    }
+    Object other;
+    player.OnCollisionEnter(other);
+    Floor floor;
+    floor.OnCollisionEnter(other);
+    enemy.OnCollisionEnter(other);
+    return 0;
 }
 
-
-
-
-
-
-
-int main(void)
-{
+// main 함수
+int main(void) {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-    // GLFW 라이브러리 초기화
     if (!glfwInit())
         return -1;
 
     GLFWwindow* window;
-    window = glfwCreateWindow(800, 600, "Google Dino Run Copy Game", NULL, NULL);
+    window = glfwCreateWindow(800, 600, "Dino Run Copy Game", NULL, NULL);
 
-    if (!window)
-    {
+    if (!window) {
         glfwTerminate();
         return -1;
     }
@@ -105,27 +121,29 @@ int main(void)
 
     Initialize();
 
-    // 플레이어 객체 생성
-    Player player(50.0f); // 플레이어 객체 생성 (50px 정사각형)
+    EnemyBlock enemy;
 
-    // 바닥 객체 생성
-    Floor floor(100.0f); // 바닥 객체 생성 (100px 높이)
+    // 5개의 별 생성
+    const int starCount = 5;
+    Star stars[starCount];
+    for (int i = 0; i < starCount; ++i) {
+        stars[i].posX = randomFloat(0.0f, 800.0f);
+        stars[i].posY = randomFloat(0.0f, 300.0f);
+        stars[i].size = randomFloat(30.0f, 60.0f); // 크기를 픽셀 단위로 지정
+    }
 
-    // 장애물 객체 생성
-    EnemyBlock obstacleLow1(50.0f, 100.0f);
-    EnemyBlock obstacleLow2(50.0f, 100.0f);// 낮은 장애물 (높이 100px)
-    EnemyBlock obstacleHigh1(50.0f, 300.0f);
-    EnemyBlock obstacleHigh2(50.0f, 300.0f);// 높은 장애물 (높이 300px)   
-
-    while (!glfwWindowShouldClose(window))
-    {
+    while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
 
+        // deltaTime 계산
+        high_resolution_clock::time_point currentTime = high_resolution_clock::now();
+        duration<float> elapsedTime = duration_cast<duration<float>>(currentTime - lastTime);
+        float deltaTime = elapsedTime.count();
+        lastTime = currentTime;
+
         Physics();
-        Update(player);
-
-        Render(player, floor, obstacleLow1, obstacleHigh1, obstacleHigh2 , obstacleLow2);
-
+        Update(enemy, player, stars, starCount, deltaTime);
+        Render(enemy, player, stars, starCount);
         glfwSwapBuffers(window);
     }
 

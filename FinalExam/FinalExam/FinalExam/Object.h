@@ -1,99 +1,69 @@
-#pragma once
-
+ï»¿#pragma once
 #include <GLFW/glfw3.h>
 
+void PixelToOpenGL(float FloorXpixel, float FloorYpixel);
+
+// ï¿½âº» Å¬ï¿½ï¿½ï¿½ï¿½
 class Object {
 public:
-    virtual void OnCollisionEnter(Object& other) {
-        // Handle collision logic for generic Object
-    }
+    float posX, posY, width, height;
+    Object(float x = 0.0f, float y = 0.0f, float w = 0.0f, float h = 0.0f)
+        : posX(x), posY(y), width(w), height(h) {}
 
-    virtual void Draw() const {
-        // Default draw method (does nothing)
-    }
+    virtual void OnCollisionEnter(Object& other) {}
 };
 
+// Player Å¬ï¿½ï¿½ï¿½ï¿½
 class Player : public Object {
-private:
-    float size; // ÇÃ·¹ÀÌ¾î Á¤»ç°¢Çü ÇÑ º¯ÀÇ ±æÀÌ (ÇÈ¼¿ ´ÜÀ§)
 public:
-    Player(float size) : size(size) {}
+    float velocityY = 0.0f; // y ï¿½ï¿½ ï¿½Óµï¿½
+    bool isJumping = false; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+
+    Player() : Object(100.0f, 450.0f, 50.0f, 50.0f) {}
 
     void OnCollisionEnter(Object& other) override {
-        // Handle collision logic for Player
+        drawPlayer();
     }
-
-    void Draw() const override {
-        // Draw red square for Player
-        glColor3ub(255, 0, 0); // Red color
-        glBegin(GL_QUADS);
-        glVertex2f(-size / 800.0f, -size / 600.0f);
-        glVertex2f(size / 800.0f, -size / 600.0f);
-        glVertex2f(size / 800.0f, size / 600.0f);
-        glVertex2f(-size / 800.0f, size / 600.0f);
-        glEnd();
-
-        // Draw outline
-        glLineWidth(3.0f);
-        glColor3ub(255, 255, 255); // White outline
-        glBegin(GL_LINE_LOOP);
-        glVertex2f(-size / 800.0f, -size / 600.0f);
-        glVertex2f(size / 800.0f, -size / 600.0f);
-        glVertex2f(size / 800.0f, size / 600.0f);
-        glVertex2f(-size / 800.0f, size / 600.0f);
-        glEnd();
-    }
+    void drawPlayer();
 };
 
-class Floor : public Object {
-private:
-    float height; // ¹Ù´ÚÀÇ ³ôÀÌ (ÇÈ¼¿ ´ÜÀ§)
-public:
-    Floor(float height) : height(height) {}
-
-    void OnCollisionEnter(Object& other) override {
-        // Handle collision logic for Floor
-    }
-
-    void Draw() const override {
-        // Draw yellow ground
-        glColor3ub(255, 200, 15); // Yellow color
-        glBegin(GL_QUADS);
-        glVertex2f(-1.0f, -1.0f); // Bottom-left corner
-        glVertex2f(1.0f, -1.0f); // Bottom-right corner
-        glVertex2f(1.0f, -(100.0f / 200.0f)); // Top-right corner (¹Ù´ÚÀ¸·ÎºÎÅÍ 100px À§Ä¡)
-        glVertex2f(-1.0f, -(100.0f / 200.0f)); // Top-left corner (¹Ù´ÚÀ¸·ÎºÎÅÍ 100px À§Ä¡)
-        glEnd();
-    } 
-};
+// EnemyBlock Å¬ï¿½ï¿½ï¿½ï¿½
 class EnemyBlock : public Object {
-private:
-    float width;    // Àå¾Ö¹°ÀÇ ³Êºñ (ÇÈ¼¿ ´ÜÀ§)
-    float height;   // Àå¾Ö¹°ÀÇ ³ôÀÌ (ÇÈ¼¿ ´ÜÀ§)
-    float positionX; // Àå¾Ö¹°ÀÇ X À§Ä¡ (ÇÈ¼¿ ´ÜÀ§)
-    float positionY; // Àå¾Ö¹°ÀÇ Y À§Ä¡ (ÇÈ¼¿ ´ÜÀ§)
 public:
-    EnemyBlock(float width, float height) : width(width), height(height), positionX(0.0f), positionY(0.0f) {}
+    float posX1 = 800.0f;
+    float posX2 = 1600.0f;
+    float posX3 = 2400.0f;
+    float posX4 = 2500.0f;
+
+    EnemyBlock() : Object(0.0f, 0.0f, 50.0f, 100.0f) {}
 
     void OnCollisionEnter(Object& other) override {
-        // Handle collision logic for EnemyBlock
+        drawCac();
     }
-
-    void SetPosition(float x, float y) {
-        positionX = x;
-        positionY = y;
-    }
-
-    void Draw() const override {
-        // Draw green block
-        glColor3ub(0, 255, 0); // Green color
-        glBegin(GL_QUADS);
-        glVertex2f(positionX / 800.0f - width / 800.0f, positionY / 600.0f - height / 600.0f);
-        glVertex2f(positionX / 800.0f + width / 800.0f, positionY / 600.0f - height / 600.0f);
-        glVertex2f(positionX / 800.0f + width / 800.0f, positionY / 600.0f + height / 600.0f);
-        glVertex2f(positionX / 800.0f - width / 800.0f, positionY / 600.0f + height / 600.0f);
-        glEnd();
-    }
+    void drawCac();
 };
 
+// Floor Å¬ï¿½ï¿½ï¿½ï¿½
+class Floor : public Object {
+public:
+    void OnCollisionEnter(Object& other) override {
+        drawFloor();
+    }
+    void drawFloor();
+};
 
+// Star Å¬ï¿½ï¿½ï¿½ï¿½
+class Star : public Object {
+public:
+    float size;
+
+    Star() : Object(), size(0.0f) {}
+
+    void OnCollisionEnter(Object& other) override {
+        drawStar();
+    }
+    void drawStar() const;
+};
+
+// PhysicsAABB ï¿½Ô¼ï¿½
+int PhysicsAABB(const Object& A, const Object& B);
